@@ -16,12 +16,16 @@ class PaymentsController < ApplicationController
   end
 
   def start_encrypted
-    content = {
+    @content = {
+      "cert_id" => "YYFQ434FHXAF6",
       "charset" => "utf-8",
       "business"  => "sunaoshi@kimaroki.jp",
+      "cmd" => "_xclick",
+      #"business"  => "AVZU7JG6Q2JTC2",
 
       # 商品名
       "item_name" => "第十七回文学フリマ出店料 (ブース1つ、追加イスなし)",
+      "item_number" => "0",
       # 通貨 (JPY=日本円)
       "currency_code" => "JPY",
       # 金額
@@ -31,23 +35,23 @@ class PaymentsController < ApplicationController
       "custom" => "tx-123412341234",
 
       # アドレスを上書きするか?
-      "address_override" => "1",
+#      "address_override" => "1",
 
       # フォームを上書きする内容
-      "country" => "JP",
-      "first_name" => "野原",
-      "last_name" => "しんのすけ",
-      "address1" => "ひまわり町",
-      "address2" => "1-2-3–123",
-      "city" => "春日部市",
-      "state" => "埼玉県",
-      "zip" => "123-1234",
-      "night_phone_a" => "090",
-      "night_phone_b" => "1234",
-      "night_phone_c" => "5678",
-      "email" => "shinchan@kimaroki.jp",
+#     "country" => "JP",
+#     "first_name" => "野原",
+#     "last_name" => "しんのすけ",
+#     "address1" => "ひまわり町",
+#     "address2" => "1-2-3–123",
+#     "city" => "春日部市",
+#     "state" => "埼玉県",
+#     "zip" => "123-1234",
+#     "night_phone_a" => "090",
+#     "night_phone_b" => "1234",
+#     "night_phone_c" => "5678",
+#     "email" => "shinchan@kimaroki.jp",
     }
-    @encrypted = encrypt_for_paypal(content)
+    @encrypted = encrypt_for_paypal(@content)
   end
 
   def finish
@@ -65,16 +69,20 @@ class PaymentsController < ApplicationController
   APP_KEY      = OpenSSL::PKey::RSA.new(APP_KEY_PEM, '')
 
   def encrypt_for_paypal(values)
+    # 参考: http://railscasts.com/episodes/143-paypal-security?view=asciicast
+    content = values.map { |k, v| "#{k}=#{v}" }.join("\n")
+    puts content
+
     signed = OpenSSL::PKCS7::sign(APP_CERT,
                                   APP_KEY,
-                                  values.map { |k, v| "#{k}=#{v}" }.join("\n"),
+                                  content,
                                   [],
                                   OpenSSL::PKCS7::BINARY)
 
     encrypted = OpenSSL::PKCS7::encrypt([PAYPAL_CERT],
                                         signed.to_der,
                                         # TODO: より安全な 'DES-EDE3-CBC', 'AES-256-CBC' も試してみる
-                                        OpenSSL::Cipher::new('DES3'),
+                                        OpenSSL::Cipher::new('DES-EDE3-CBC'),
                                         OpenSSL::PKCS7::BINARY).to_s.gsub("\n", "")
   end
 end
