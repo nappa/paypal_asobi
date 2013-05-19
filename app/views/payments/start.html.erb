@@ -1,0 +1,46 @@
+<h1>Payment start</h1>
+
+<!--
+production
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+sandbox
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+-->
+
+<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+
+<!-- Identify your business so that you can collect the payments. -->
+<input type="hidden" name="business" value="sunaoshi@kimaroki.jp">
+
+<!-- Specify a Buy Now button. -->
+<input type="hidden" name="cmd" value="_xclick">
+
+<!-- Specify details about the item that buyers will purchase. -->
+<input type="hidden" name="item_name" value="第十七回文学フリマ出店料 (ブース1つ、追加イスなし)">
+<input type="hidden" name="amount" value="3500">
+<input type="hidden" name="currency_code" value="JPY">
+<input type="hidden" name="charset" value="utf-8">
+
+<!-- トランザクションID(パススルー変数)。 -->
+<input type="hidden" name="custom" value="tx-123412341234">
+
+<!-- プレフィルさせる内容 -->
+<input type="hidden" name="address_override" value="1">
+<input type="hidden" name="country" value="JP">
+<input type="hidden" name="first_name" value="野原">
+<input type="hidden" name="last_name" value="しんのすけ">
+<input type="hidden" name="address1" value="ひまわり町">
+<input type="hidden" name="address2" value="1-2-3–123">
+<input type="hidden" name="city" value="春日部市">
+<input type="hidden" name="state" value="埼玉県">
+<input type="hidden" name="zip" value="123-1234">
+<input type="hidden" name="night_phone_a" value="090">
+<input type="hidden" name="night_phone_b" value="1234">
+<input type="hidden" name="night_phone_c" value="5678">
+<input type="hidden" name="email" value="shinchan@kimaroki.jp">
+
+<!-- Display the payment button. -->
+<input type="image" src="https://www.paypalobjects.com/ja_JP/JP/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - オンラインでより安全・簡単にお支払い">
+<img alt="" border="0" src="https://www.paypalobjects.com/ja_JP/i/scr/pixel.gif" width="1" height="1">
+
+</form>

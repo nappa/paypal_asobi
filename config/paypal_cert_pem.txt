@@ -1,0 +1,65 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 0 (0x0)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=US, ST=California, L=San Jose, O=PayPal, Inc., OU=sandbox_certs, CN=sandbox_api/emailAddress=re@paypal.com
+        Validity
+            Not Before: Apr 19 07:02:54 2004 GMT
+            Not After : Apr 19 07:02:54 2035 GMT
+        Subject: C=US, ST=California, L=San Jose, O=PayPal, Inc., OU=sandbox_certs, CN=sandbox_api/emailAddress=re@paypal.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:b7:96:e3:bf:fd:0d:d2:a3:77:4e:20:4b:fb:5f:
+                    8b:fc:48:e9:3b:58:de:a8:f6:89:0b:57:c3:8b:e7:
+                    02:ea:de:ad:4d:b4:39:e4:e7:78:a6:84:fc:c6:34:
+                    b3:34:7e:52:e3:c8:87:75:98:74:0b:b1:2a:7c:4d:
+                    4c:3c:27:36:72:82:6a:09:2a:43:ab:19:8e:ac:ef:
+                    bd:41:7b:23:1d:60:27:c7:ab:1b:e9:fa:07:1e:9b:
+                    0f:9b:b5:a0:43:25:26:0e:c3:70:4d:64:f7:38:64:
+                    77:f7:c1:11:98:1c:f3:72:82:f9:a3:07:f7:cc:14:
+                    a9:44:fd:0d:95:35:a8:9c:f3
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier:
+                83:2E:22:D9:AB:2A:88:2D:6B:A7:93:2C:F3:50:F1:F2:77:D5:A9:D2
+            X509v3 Authority Key Identifier:
+                keyid:83:2E:22:D9:AB:2A:88:2D:6B:A7:93:2C:F3:50:F1:F2:77:D5:A9:D2
+                DirName:/C=US/ST=California/L=San Jose/O=PayPal, Inc./OU=sandbox_certs/CN=sandbox_api/emailAddress=re@paypal.com
+                serial:00
+
+            X509v3 Basic Constraints:
+                CA:TRUE
+    Signature Algorithm: sha1WithRSAEncryption
+         57:36:f3:c0:d8:19:7f:86:5f:6f:96:3f:f7:70:75:7c:1f:89:
+         c7:fe:ae:51:be:d1:5f:46:04:f2:59:60:a6:49:43:4e:bd:5b:
+         f6:51:91:4b:96:15:0f:8e:a5:dd:b2:84:fa:67:78:67:b3:9b:
+         0d:da:53:6d:b6:08:6a:dd:2a:13:ab:04:94:51:72:9a:0e:dc:
+         58:c7:1e:65:d6:92:a8:1b:42:a0:d6:74:6e:d2:fb:f9:7c:9f:
+         54:1f:0c:fa:7e:8e:95:0b:3a:b7:27:18:45:18:e3:52:26:8d:
+         92:53:ca:56:c9:43:56:f9:3c:10:63:1a:23:f4:3e:92:b8:f1:
+         c7:45
+-----BEGIN CERTIFICATE-----
+MIIDoTCCAwqgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBmDELMAkGA1UEBhMCVVMx
+EzARBgNVBAgTCkNhbGlmb3JuaWExETAPBgNVBAcTCFNhbiBKb3NlMRUwEwYDVQQK
+EwxQYXlQYWwsIEluYy4xFjAUBgNVBAsUDXNhbmRib3hfY2VydHMxFDASBgNVBAMU
+C3NhbmRib3hfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tMB4XDTA0
+MDQxOTA3MDI1NFoXDTM1MDQxOTA3MDI1NFowgZgxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEVMBMGA1UEChMMUGF5
+UGFsLCBJbmMuMRYwFAYDVQQLFA1zYW5kYm94X2NlcnRzMRQwEgYDVQQDFAtzYW5k
+Ym94X2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbTCBnzANBgkqhkiG
+9w0BAQEFAAOBjQAwgYkCgYEAt5bjv/0N0qN3TiBL+1+L/EjpO1jeqPaJC1fDi+cC
+6t6tTbQ55Od4poT8xjSzNH5S48iHdZh0C7EqfE1MPCc2coJqCSpDqxmOrO+9QXsj
+HWAnx6sb6foHHpsPm7WgQyUmDsNwTWT3OGR398ERmBzzcoL5owf3zBSpRP0NlTWo
+nPMCAwEAAaOB+DCB9TAdBgNVHQ4EFgQUgy4i2asqiC1rp5Ms81Dx8nfVqdIwgcUG
+A1UdIwSBvTCBuoAUgy4i2asqiC1rp5Ms81Dx8nfVqdKhgZ6kgZswgZgxCzAJBgNV
+BAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEV
+MBMGA1UEChMMUGF5UGFsLCBJbmMuMRYwFAYDVQQLFA1zYW5kYm94X2NlcnRzMRQw
+EgYDVQQDFAtzYW5kYm94X2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNv
+bYIBADAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4GBAFc288DYGX+GX2+W
+P/dwdXwficf+rlG+0V9GBPJZYKZJQ069W/ZRkUuWFQ+Opd2yhPpneGezmw3aU222
+CGrdKhOrBJRRcpoO3FjHHmXWkqgbQqDWdG7S+/l8n1QfDPp+jpULOrcnGEUY41Im
+jZJTylbJQ1b5PBBjGiP0PpK48cdF
+-----END CERTIFICATE-----
