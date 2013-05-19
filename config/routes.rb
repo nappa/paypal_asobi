@@ -1,4 +1,7 @@
 PaypalAsobi::Application.routes.draw do
+  get "payments/start"
+  get "payments/start_encrypted"
+  get "payments/finish"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
