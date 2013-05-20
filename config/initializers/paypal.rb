@@ -1,7 +1,7 @@
 
 PaypalConfig = (
   case Rails.env
-  when 'development', 'paypal-asobi'
+  when 'development'
     {
       paypal_url:       'https://www.sandbox.paypal.com/cgi-bin/webscr',
       paypal_email:     'suoaoshi@kimaroki.jp',
