@@ -1,4 +1,5 @@
-# -*- coding: undecided -*-
+# -*- coding: utf-8 -*-
+
 PaypalAsobi::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
