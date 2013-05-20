@@ -1,3 +1,4 @@
+# -*- coding: undecided -*-
 PaypalAsobi::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -77,4 +78,7 @@ PaypalAsobi::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  # heroku むけ
+  config.serve_static_assets = true
 end
