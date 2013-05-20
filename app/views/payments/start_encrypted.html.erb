@@ -7,7 +7,7 @@ sandbox
 <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
 -->
 
-<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+<form action="<%=PaypalConfig[:paypal_url]%>" method="post">
 
 <!-- secret button -->
 <input type="hidden" name="cmd" value="_s-xclick">
