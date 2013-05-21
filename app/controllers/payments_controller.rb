@@ -34,7 +34,7 @@ class PaymentsController < ApplicationController
       # パススルー変数
       ### 請求書ID(128バイトまで)。
       ### PayPal 内で Unique でなければならない
-      'invoice' => '12341234',
+      'invoice' => SecureRandom.hex(15),
       ### 使徒不定(256バイトまで)
       'custom' => 'tx-123412341234',
 
