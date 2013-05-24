@@ -100,6 +100,13 @@ class PaymentsController < ApplicationController
 
   end
 
+  # GET /payments/ipn
+  # POST /payments/ipn
+  # PayPal IPN Endpoint
+  def ipn
+    logger.info params
+  end
+
   private
 
   # TODO: パスを environments 毎にわけたい

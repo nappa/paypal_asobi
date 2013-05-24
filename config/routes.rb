@@ -3,6 +3,7 @@ PaypalAsobi::Application.routes.draw do
   get "payments/start_encrypted"
   match "payments/finish", :via => [:get, :post]
   match "payments/cancel", :via => [:get, :post]
+  match "payments/ipn",    :via => [:get, :post]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
