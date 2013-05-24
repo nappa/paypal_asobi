@@ -59,7 +59,7 @@ class PaymentsController < ApplicationController
       'state'      => '埼玉県',
       'zip'        => '123-1234', #仕様上ハイフンはダメと書いてあるが、ハイフンがないと逆に不具合が起きてしまう
       'night_phone_a' => '+81', # U.S. 以外の場合は国番号
-      'night_phone_b' => '0312345678', 
+      'night_phone_b' => '0312345678',
       'email'      => 'shinchan@kimaroki.jp',
     }
     @encrypted = encrypt_for_paypal(@content)
@@ -68,6 +68,8 @@ class PaymentsController < ApplicationController
   # POST /payments/finish
   # (PayPal 側の画面を経て決済を完了した場合にここに POST されてくる)
   def finish
+    logger.info params
+
     # PDT のリファレンスはココ
     # https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/howto_html_paymentdatatransfer
 
@@ -84,6 +86,7 @@ class PaymentsController < ApplicationController
   # GET /payments/cancel
   # (PayPal 画面中でキャンセルを指示された場合にここにリダイレクトされてくる)
   def cancel
+    logger.info params
 
     # invoice と custom に対応する payment を探す。
     # それが処理中のステータスであれば
