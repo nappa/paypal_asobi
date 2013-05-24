@@ -75,6 +75,29 @@ class PaymentsController < ApplicationController
     # こんな感じでPOSTされてくる
     "http://fierce-scrubland-4220.herokuapp.com/payments/finish?tx=5RT094219P2792544&st=Completed&amt=3500&cc=JPY&cm=tx%252d123412341234&item_number="
 
+
+#  <input type="hidden" name="cmd" value="_notify-synch">
+#  <input type="hidden" name="tx" value="TransactionID">
+#  <input type="hidden" name="at" value="YourIdentityToken">
+#  <input type="submit" value="PDT">
+
+    url = URI.parse(PaypalConfig[:paypal_url])
+
+    conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
+      builder.request  :url_encoded
+      builder.response :logger
+      builder.adapter  :net_http
+    end
+
+    pdt = conn.post, url.path, {
+      :submit => 'PDT',
+      :cmd    => '_notify-synch',
+      :tx     => params['tx'],
+      :at     => PayPalConfig[:paypal_pdt_token],
+    }
+
+    pp pdt
+
     # PDT のリファレンスはココ
     # https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/howto_html_paymentdatatransfer
 
@@ -109,6 +132,7 @@ class PaymentsController < ApplicationController
   # POST /payments/ipn
   # PayPal IPN Endpoint
   def ipn
+    # CSRF Token は切ってある (csrf-token が付与できないため)
     logger.info params
   end
 
