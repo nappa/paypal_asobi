@@ -12,6 +12,8 @@ require 'openssl'
 
 
 class PaymentsController < ApplicationController
+  skip_before_filter :verify_authenticity_token, :only => [ :ipn ]
+
   def start
   end
 
@@ -69,6 +71,9 @@ class PaymentsController < ApplicationController
   # (PayPal 側の画面を経て決済を完了した場合にここに POST されてくる)
   def finish
     logger.info params
+
+    # こんな感じでPOSTされてくる
+    "http://fierce-scrubland-4220.herokuapp.com/payments/finish?tx=5RT094219P2792544&st=Completed&amt=3500&cc=JPY&cm=tx%252d123412341234&item_number="
 
     # PDT のリファレンスはココ
     # https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/howto_html_paymentdatatransfer
