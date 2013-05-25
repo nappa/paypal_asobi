@@ -93,7 +93,7 @@ class PaymentsController < ApplicationController
       :submit => 'PDT',
       :cmd    => '_notify-synch',
       :tx     => params['tx'],
-      :at     => PayPalConfig[:paypal_pdt_token],
+      :at     => PaypalConfig[:paypal_pdt_token],
     }
 
     pp pdt
