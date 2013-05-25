@@ -31,9 +31,11 @@ class PaypalNvp < Hash
       encoding = 'Windows-31J'
     end
 
-    if string.nil? || string.empty? || encoding.upcase == 'UTF-8'
+    if string.nil? || string.empty?
       # 変換不要
       string
+    elsif encoding.upcase == 'UTF-8'
+      CGI.unescape(string)
     else
       CGI.unescape(string).force_encoding(encoding).encode('UTF-8', {:invalid => :replace,
                                                              :undef   => :replace,
