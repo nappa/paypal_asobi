@@ -92,7 +92,10 @@ class PaymentsController < ApplicationController
       # TODO エラー処理
     else
       # PayPal に対してクエリを送信する
+      logger.info "try to invoke PDT (tx=#{params[:tx]})"
+      # TODO タイムアウト時の画面だし
       nvp = pdt(params[:tx])
+      logger.info "NVP received: nvp.inspect\n" + nvp
 
       if nvp.has_key?('SUCCESS')
 
