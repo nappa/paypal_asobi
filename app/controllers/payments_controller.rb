@@ -95,7 +95,7 @@ class PaymentsController < ApplicationController
       logger.info "try to invoke PDT (tx=#{params[:tx]})"
       # TODO タイムアウト時の画面だし
       nvp = pdt(params[:tx])
-      logger.info "NVP received: nvp.inspect\n" + nvp
+      logger.info "NVP received: nvp.inspect\n" + nvp.ai
 
       if nvp.has_key?('SUCCESS')
 
