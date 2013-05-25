@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'openssl'
+require 'pp'
+require 'awesome_print'
 
 #
 # Paypal Form reference:
