@@ -31,7 +31,7 @@ class PaypalNvp < Hash
       encoding = 'Windows-31J'
     end
 
-    if string.nil? || string.empty? || string.encoding.upcase == 'UTF-8'
+    if string.nil? || string.empty? || encoding.upcase == 'UTF-8'
       # 変換不要
       string
     else

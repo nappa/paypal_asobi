@@ -181,6 +181,7 @@ class PaymentsController < ApplicationController
   def pdt(tx)
     url = URI.parse(PaypalConfig[:paypal_url])
 
+    # TODO SSL証明書の検証をする
     conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
       builder.request  :retry, { limit: 5, interval: 0.2 }
       builder.response :logger
