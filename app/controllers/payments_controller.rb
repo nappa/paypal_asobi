@@ -4,14 +4,19 @@ require 'pp'
 require 'awesome_print'
 
 #
-# Paypal Form reference:
-# https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/
+# PayPal PDT/IPN の実験的実装。
 #
-# 暗号化方式の説明は、何処にも無い。
-# https://www.paypal.com/us/cgi-bin/webscr?cmd=p/xcl/rec/ewp-code
-# ↑のコードをRubyで書くよりない……
+# Reference:
+#  * Paypal Form reference:
+#    https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/
 #
-
+#
+#  * PayPal IPN and PDT Variables:
+#    https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_IPNandPDTVariables
+#  * PayPal 暗号化まわりのサンプルコード:
+#    https://www.paypal.com/us/cgi-bin/webscr?cmd=p/xcl/rec/ewp-code
+#
+#
 
 class PaymentsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [ :ipn ]
@@ -77,44 +82,53 @@ class PaymentsController < ApplicationController
     # こんな感じでPOSTされてくる
     "http://fierce-scrubland-4220.herokuapp.com/payments/finish?tx=5RT094219P2792544&st=Completed&amt=3500&cc=JPY&cm=tx%252d123412341234&item_number="
 
-
-#  <input type="hidden" name="cmd" value="_notify-synch">
-#  <input type="hidden" name="tx" value="TransactionID">
-#  <input type="hidden" name="at" value="YourIdentityToken">
-#  <input type="submit" value="PDT">
-
-    url = URI.parse(PaypalConfig[:paypal_url])
-
-    conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
-      builder.request  :url_encoded
-      builder.request  :retry, { limit: 5, interval: 0.2 }
-
-      builder.response :logger
-      builder.response :follow_redirects, { limit: 5 }
-      builder.response :raise_error
-
-      builder.adapter  :net_http
+    if params[:tx].blank?
+      # TODO 適切なエラー画面に飛ばす
+      raise "PayPal BUG? - tx is blank!"
     end
 
-    pdt = conn.post, url.path, {
-      :submit => 'PDT',
-      :cmd    => '_notify-synch',
-      :tx     => params['tx'],
-      :at     => PaypalConfig[:paypal_pdt_token],
-    }
+    if params[:st] != 'Completed'
+      raise "PayPal BUG? - params[:st](#{params[:st]}) != 'Completed'"
+      # TODO エラー処理
+    else
+      # PayPal に対してクエリを送信する
+      nvp = pdt(params[:tx))
 
-    pp pdt
+      if nvp.has_key?('SUCCESS')
 
-    # PDT のリファレンスはココ
-    # https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/howto_html_paymentdatatransfer
+        if nvp['txn_id'] != params['txn_id']
+          raise "PayPal BUG? - nvp['txn_id'](#{nvp['txn_id']}) != params['tx'](#{params['tx']})"
+        end
 
-    # invoice と custom に対応する payment を探す。
-    # それが処理中のステータスの場合または IPN で完了済のステータスの場合、
-    #   * 完了ステータスに変更 (IPN 完了済の場合を除く)
-    #   * 完了しましたメールを出す (IPN 完了済の場合を除く)
-    #   * 完了しました画面を出す
-    # それ以外のとき
-    #   * エラー画面を出す
+        ## check that txn_id has not been previously processed
+        #
+        # if nvp['txn_id'] != xxx...
+        #   raise
+        # end
+
+        ## check that receiver_email is your Primary PayPal email
+        if nvp['receiver_email'] != PaypalConfig[:paypal_email]
+          # TODO エラー画面を出す
+        end
+
+        ## invoice で対応する payment を探す。なけれぱエラー
+        # payment = Payment.find(:invoice, nvp['invoice'])
+        # if payment.nil?
+        #   # エラー
+        # end
+        #
+        # TODO 数量と金額を確認。
+        # TODO トランザクション内で完了ステータスに変更
+        # TODO 完了済でない場合、メールを出す
+        # TODO 完了しました画面を出す
+      elsif nvp.has_key?('FAIL')
+        # TODO エラー画面を出す
+        # (しばらく経ってからお待ちください、みたいな感じ?)
+        # どんなケースにここに飛んでくるかがわからないので、要調査
+      else
+        # TODO エラー処理
+      end
+    end
 
   end
 
@@ -145,6 +159,36 @@ class PaymentsController < ApplicationController
 
   private
 
+  # PDT を実行して PayPal からデータを取得します
+  def pdt(tx)
+    url = URI.parse(PaypalConfig[:paypal_url])
+
+    conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
+    #  builder.request  :retry, { limit: 5, interval: 0.2 }
+      builder.response :logger
+      builder.response :raise_error
+      builder.adapter  :net_http
+    end
+
+    form = URI.encode_www_form({
+                                 :submit => 'PDT',
+                                 :charset => 'utf-8',
+                                 :cmd    => '_notify-synch',
+                                 :tx     => tx,
+                                 :at     => PaypalConfig[:paypal_pdt_token],
+                               })
+
+    pdt = conn.post do |req|
+      req.url url.path
+      req.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+
+      req.body = form
+    end
+
+    response = pdt.env[:body]
+    return PaypalNvp.parse(response)
+  end
+
   # TODO: パスを environments 毎にわけたい
   PAYPAL_CERT_PEM = File.read(PaypalConfig[:path][:paypal_cert])
   APP_CERT_PEM    = File.read(PaypalConfig[:path][:merchant_cert])
@@ -164,7 +208,6 @@ class PaymentsController < ApplicationController
 
   # 利用する暗号アルゴリズム (サンプルでは DES-EDE3-CBC)
   CIPHER = 'AES-256-CBC'
-
   def encrypt_for_paypal(values)
     # 参考: http://railscasts.com/episodes/143-paypal-security?view=asciicast
     content = values.map { |k, v| "#{k}=#{v}" }.join("\n")
