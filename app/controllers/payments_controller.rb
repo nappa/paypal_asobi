@@ -96,7 +96,7 @@ class PaymentsController < ApplicationController
 
       if nvp.has_key?('SUCCESS')
 
-        if nvp['txn_id'] != params['txn_id']
+        if nvp['txn_id'] != params['tx']
           raise "PayPal BUG? - nvp['txn_id'](#{nvp['txn_id']}) != params['tx'](#{params['tx']})"
         end
 
