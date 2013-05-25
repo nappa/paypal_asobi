@@ -87,10 +87,12 @@ class PaymentsController < ApplicationController
 
     conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
       builder.request  :url_encoded
+      builder.request  :retry, { limit: 5, interval: 0.2 }
+
       builder.response :logger
       builder.response :follow_redirects, { limit: 5 }
-      builder.response :retry, { limit: 5, interval: 0.2 }
       builder.response :raise_error
+
       builder.adapter  :net_http
     end
 
