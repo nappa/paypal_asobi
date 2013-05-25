@@ -132,7 +132,6 @@ class PaymentsController < ApplicationController
         # TODO エラー処理
       end
     end
-
   end
 
   # GET /payments/cancel
