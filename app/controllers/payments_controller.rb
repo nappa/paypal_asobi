@@ -92,7 +92,7 @@ class PaymentsController < ApplicationController
       # TODO エラー処理
     else
       # PayPal に対してクエリを送信する
-      nvp = pdt(params[:tx]))
+      nvp = pdt(params[:tx])
 
       if nvp.has_key?('SUCCESS')
 
