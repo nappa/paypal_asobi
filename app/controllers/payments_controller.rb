@@ -10,14 +10,12 @@ require 'awesome_print'
 #  * Paypal Form reference:
 #    https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/
 #
-#
 #  * PayPal IPN and PDT Variables:
 #    https://cms.paypal.com/jp/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_IPNandPDTVariables
+#
 #  * PayPal 暗号化まわりのサンプルコード:
 #    https://www.paypal.com/us/cgi-bin/webscr?cmd=p/xcl/rec/ewp-code
 #
-#
-
 class PaymentsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [ :ipn ]
 
@@ -43,32 +41,39 @@ class PaymentsController < ApplicationController
       # パススルー変数
       ### 請求書ID(128バイトまで)。
       ### PayPal 内で Unique でなければならない
+      ### とりあえずランダムな数にしておく
       'invoice' => SecureRandom.hex(15),
-      ### 使徒不定(256バイトまで)
+      ### 使い方は任意。(256バイトまで)
       'custom' => 'tx-123412341234',
 
       # 決済完了時のリンク先URL
       'return' => url_for(:action => :finish),
+
       # 決済キャンセル時のリダイレクト先URL
       'cancel_return' => url_for(:action => :cancel),
 
-      # アドレスを強制的に上書きするか? (1にすると不具合が起きそうなのでやめとく)
+      # アドレスを強制的に上書きするか?
+      # (1にすると不具合が起きそうなのでやめとく)
       'address_override' => '0',
 
       # 登録フォーム類を強制的に日本語にする
       'lc' => 'jp_JP',
 
       # 非PayPal会員向けにフォームにプレフィルする内容を設定
+      # (※ShiftJIS 範囲内かつ EUC-JP 範囲内であること。
+      #    PayPalが勝手にブラウザに合わせてエンコーディングを
+      #    変えてしまうことがあるため)
       'country'    => 'JP',
       'first_name' => '野原',
       'last_name'  => 'しんのすけ',
       'address1'   => 'ひまわり町',
-      'address2'   => '1-2-3–123',
+      'address2'   => '1-2-3-123',
       'city'       => '春日部市',
       'state'      => '埼玉県',
-      'zip'        => '123-1234', #仕様上ハイフンはダメと書いてあるが、ハイフンがないと逆に不具合が起きてしまう
-      'night_phone_a' => '+81', # U.S. 以外の場合は国番号
-      'night_phone_b' => '0312345678',
+      'zip'        => '123-1234',      # 仕様上ハイフンはダメと書いてあるが、
+                                       # ハイフンがないと逆に不具合が起きてしまう
+      'night_phone_a' => '+81',        # U.S. 以外の場合は国番号。日本は '+81' 固定
+      'night_phone_b' => '0312345678', # ハイフンを入れないこと
       'email'      => 'shinchan@kimaroki.jp',
     }
     @encrypted = encrypt_for_paypal(@content)
@@ -77,11 +82,6 @@ class PaymentsController < ApplicationController
   # POST /payments/finish
   # (PayPal 側の画面を経て決済を完了した場合にここに POST されてくる)
   def finish
-    logger.info params
-
-    # こんな感じでPOSTされてくる
-    "http://fierce-scrubland-4220.herokuapp.com/payments/finish?tx=5RT094219P2792544&st=Completed&amt=3500&cc=JPY&cm=tx%252d123412341234&item_number="
-
     if params[:tx].blank?
       # TODO 適切なエラー画面に飛ばす
       raise "PayPal BUG? - tx is blank!"
@@ -92,7 +92,7 @@ class PaymentsController < ApplicationController
       # TODO エラー処理
     else
       # PayPal に対してクエリを送信する
-      nvp = pdt(params[:tx))
+      nvp = pdt(params[:tx]))
 
       if nvp.has_key?('SUCCESS')
 
@@ -164,7 +164,7 @@ class PaymentsController < ApplicationController
     url = URI.parse(PaypalConfig[:paypal_url])
 
     conn = Faraday.new(:url => url.scheme + '://' + url.host) do |builder|
-    #  builder.request  :retry, { limit: 5, interval: 0.2 }
+      builder.request  :retry, { limit: 5, interval: 0.2 }
       builder.response :logger
       builder.response :raise_error
       builder.adapter  :net_http
@@ -189,7 +189,6 @@ class PaymentsController < ApplicationController
     return PaypalNvp.parse(response)
   end
 
-  # TODO: パスを environments 毎にわけたい
   PAYPAL_CERT_PEM = File.read(PaypalConfig[:path][:paypal_cert])
   APP_CERT_PEM    = File.read(PaypalConfig[:path][:merchant_cert])
   APP_KEY_PEM     = File.read(PaypalConfig[:path][:merchant_pubkey])
@@ -202,12 +201,14 @@ class PaymentsController < ApplicationController
   APP_KEY      = OpenSSL::PKey::RSA.new(APP_KEY_PEM, '')
 
   # 署名時のオプション
-  SIGN_OPTS = (OpenSSL::PKCS7::BINARY  |  # バイナリを送る
-               OpenSSL::PKCS7::NOCERTS |  # 証明書を送信しない (PayPal側に証明書は保存されている)
-               OpenSSL::PKCS7::NOSMIMECAP) # S/MIME Capability を送らない (送っても使わないし)
+  SIGN_OPTS = (OpenSSL::PKCS7::BINARY  |    # バイナリを送る
+               OpenSSL::PKCS7::NOCERTS |    # 証明書を送信しない(不要のため)
+               OpenSSL::PKCS7::NOSMIMECAP)  # S/MIME Capability を送らない(不要のため)
 
-  # 利用する暗号アルゴリズム (サンプルでは DES-EDE3-CBC)
+  # 利用する暗号アルゴリズム
+  # (サンプルでは DES-EDE3-CBCだが、使える範囲内での最強は AES-256-CBC のようだ)
   CIPHER = 'AES-256-CBC'
+
   def encrypt_for_paypal(values)
     # 参考: http://railscasts.com/episodes/143-paypal-security?view=asciicast
     content = values.map { |k, v| "#{k}=#{v}" }.join("\n")
@@ -222,8 +223,6 @@ class PaymentsController < ApplicationController
     # 暗号化
     encrypted = OpenSSL::PKCS7::encrypt([PAYPAL_CERT],
                                         signed.to_der,
-                                        # サンプルでは DES-EDE3-CBC だが
-                                        # AES-256-CBC のほうが良いに決まってる
                                         OpenSSL::Cipher::new(CIPHER),
                                         OpenSSL::PKCS7::BINARY).to_s.gsub("\n", "")
 
@@ -231,7 +230,7 @@ class PaymentsController < ApplicationController
   end
 
 
-  # invoice を生成する
+  # 仮の invoice を生成する。廃止予定
   def generate_invoice(length=128)
     SecureRandom.hex(length)
   end
