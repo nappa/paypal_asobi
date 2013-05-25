@@ -47,6 +47,7 @@ group :production do
 end
 
 gem 'faraday'
+gem 'faraday_middleware'
 gem 'awesome_print'
 
 # Use ActiveModel has_secure_password
