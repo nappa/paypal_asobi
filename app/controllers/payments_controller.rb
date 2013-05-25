@@ -170,6 +170,9 @@ class PaymentsController < ApplicationController
   def ipn
     # CSRF Token は切ってある (csrf-token が付与できないため)
     logger.info params
+
+    body = request.body.read
+    logger.info "IPN BODY: " + body
   end
 
   private
