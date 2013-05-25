@@ -16,6 +16,19 @@ require 'awesome_print'
 #  * PayPal 暗号化まわりのサンプルコード:
 #    https://www.paypal.com/us/cgi-bin/webscr?cmd=p/xcl/rec/ewp-code
 #
+#
+# 実行前の注意
+#
+#  PDT/IPN を利用する設定をしておくこと。トークン, Endpointの設定など。
+#
+#  言語の設定をきちんとしておくこと。
+# 「個人設定」→「言語エンコード」→「詳細オプション」にて、
+#    * 「次のドロップダウンメニューから、ウェブサイトで使用する
+#       エンコード方式を選択します。」で UTF-8 を選択
+#    * 「PayPalから送信されたデータと同じエンコード方式を使用しますか
+#       (IPN、ダウンロード可能なログ、メールなど)?」に「はい」を選択
+#
+#
 class PaymentsController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [ :ipn ]
 
